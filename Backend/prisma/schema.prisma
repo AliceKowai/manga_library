@@ -1,0 +1,100 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb" 
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  READER
+}
+
+enum LoanStatus {
+  PENDING
+  APPROVED
+  RECEIVED
+  RETURNED
+  REJECTED
+}
+
+model User {
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  email        String    @unique
+  password     String
+  role         UserRole  @default(READER)
+  loans        Loan[]    @relation("UserLoans")
+  messages     Message[]
+  votes        Vote[]
+  waitlist     Waitlist[]
+}
+
+model Manga {
+  id             String         @id @default(auto()) @map("_id") @db.ObjectId
+  title          String
+  author         String
+  genre          String
+  loans          Loan[]
+  waitlist       Waitlist[]
+  totalReadings  Int            @default(0)
+  options        MangaOption[]
+}
+
+model Loan {
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  status      LoanStatus   @default(PENDING)
+  user        User         @relation("UserLoans", fields: [userId], references: [id])
+  userId      String       @db.ObjectId
+  manga       Manga        @relation(fields: [mangaId], references: [id])
+  mangaId     String       @db.ObjectId
+  createdAt   DateTime     @default(now())
+  dueDate     DateTime
+  received    Boolean      @default(false)
+  returned    Boolean      @default(false)
+}
+
+model Message {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  content   String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @db.ObjectId
+  createdAt DateTime @default(now())
+}
+
+model Poll {
+  id        String        @id @default(auto()) @map("_id") @db.ObjectId
+  title     String
+  options   MangaOption[]
+  closed    Boolean       @default(false)
+  createdAt DateTime      @default(now())
+}
+
+model MangaOption {
+  id            String       @id @default(auto()) @map("_id") @db.ObjectId
+  manga         Manga        @relation(fields: [mangaId], references: [id])
+  mangaId       String       @db.ObjectId
+  poll          Poll         @relation(fields: [pollId], references: [id])
+  pollId        String       @db.ObjectId
+  votes         Vote[]
+}
+
+
+model Vote {
+  id              String        @id @default(auto()) @map("_id") @db.ObjectId
+  user            User          @relation(fields: [userId], references: [id])
+  userId          String        @db.ObjectId
+  mangaOption     MangaOption   @relation(fields: [mangaOptionId], references: [id])
+  mangaOptionId   String        @db.ObjectId
+}
+
+model Waitlist {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @db.ObjectId
+  manga     Manga    @relation(fields: [mangaId], references: [id])
+  mangaId   String   @db.ObjectId
+  createdAt DateTime @default(now())
+}
