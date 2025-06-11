@@ -20,7 +20,9 @@ router.post("/login", async (req, res) => {
     userInfo.password,
     userConsulta.password
   );
-  console.log(userConsulta);
+  console.log(isMatch, 'user:',userInfo.password, 'userbanco',userConsulta.password);
+  console.log("Senha digitada:", req.body.password);
+
   
   if (!isMatch) {
     return res.json({ message: "Email ou senha inválidos" });
