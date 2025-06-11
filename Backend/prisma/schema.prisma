@@ -37,6 +37,10 @@ model Manga {
   title          String
   author         String
   genre          String
+  volume         Int
+  deleted        Boolean        @default(false)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
   loans          Loan[]
   waitlist       Waitlist[]
   totalReadings  Int            @default(0)
