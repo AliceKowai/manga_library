@@ -36,7 +36,7 @@ router.post("/register-mangas", auth, isAdmin, async (req, res) => {
 router.get("/list-mangas", auth, async (req, res) => {
   try {
     const mangas = await prisma.manga.findMany({
-      where: { deleted: false },
+      where: { deleted: false }, include:{waitlist: true},
     });
     res.status(200).json(mangas);
   } catch (error) {

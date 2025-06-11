@@ -55,7 +55,7 @@ router.post("/loans", auth, async (req, res) => {
         .json({ message: "Nenhum administrador encontrado." });
     }
 
-    console.log(admin)
+    console.log(admin);
     const loan = await prisma.loan.create({
       data: {
         mangaId,
@@ -65,7 +65,7 @@ router.post("/loans", auth, async (req, res) => {
       },
       include: { manga: true, user: true },
     });
-        await notificationAdminPostManga(prisma, loan, admin.id);
+    await notificationAdminPostManga(prisma, loan, admin.id);
 
     res
       .status(201)
@@ -156,26 +156,33 @@ router.put("/loans/:id/status", auth, isAdmin, async (req, res) => {
 router.put("/loans/:id/return", auth, isAdmin, async (req, res) => {
   const { id } = req.params;
 
-  const waitlist = await prisma.waitlist.findMany({
-    where: { mangaId: loan.mangaId },
-  });
+  const existingLoan = await prisma.loan.findUnique({ where: { id }, include: { manga: true } });
 
-  for (const item of waitlist) {
-    await prisma.message.create({
-      data: {
-        senderId: req.userId,
-        receiverId: item.userId,
-        mangaId: loan.mangaId,
-        content: `O mangá "${manga.title}" que você está esperando agora está disponível para empréstimo!`,
-      },
-    });
+  if (!existingLoan) {
+    return res.status(404).json({ message: "Empréstimo não encontrado." });
   }
 
   try {
     const loan = await prisma.loan.update({
       where: { id },
-      data: { returned: true },
+      data: { returned: true },include: { manga: true },
     });
+
+    const waitlist = await prisma.waitlist.findMany({
+      where: { mangaId: loan.mangaId },
+    });
+    console.log("Fila de espera:", waitlist);
+
+    for (const item of waitlist) {
+      await prisma.message.create({
+        data: {
+          senderId: req.userId,
+          receiverId: item.userId,
+          mangaId: loan.mangaId,
+          content: `O mangá "${existingLoan.manga.title}" que você está esperando agora está disponível para empréstimo!`,
+        },
+      });
+    }
 
     res
       .status(200)

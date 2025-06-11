@@ -4,6 +4,7 @@ import privateRoutes from './routes/private.js'
 import mangaRoutes from './routes/manga.js'
 import loanRoutes from './routes/loan.js'
 import messageRoutes from './routes/message.js'
+import waitListRoutes from './routes/waitList.js'
 import auth from './middlewares/auth.js';
 import cors from 'cors';
 
@@ -20,5 +21,6 @@ app.use('/', auth, privateRoutes);
 app.use('/', auth, mangaRoutes);
 app.use('/', auth, loanRoutes);
 app.use('/', auth, messageRoutes);
+app.use('/', auth, waitListRoutes);
 
 app.listen(3000, ()=> console.log("Servidor Rodando"))
