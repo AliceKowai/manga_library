@@ -52,12 +52,50 @@ manga_library/
 
 ## Principais Rotas
 
+### Usuários
+- **POST /register**  
+  Cadastro de novo usuário (ADMIN ou READER).
 - **POST /login**  
   Autenticação de usuário. Retorna token JWT.
-- **POST /register**  
-  Cadastro de novo usuário.
 - **GET /users**  
   Lista todos os usuários (rota protegida).
+- **PUT /users/:id**  
+  Atualiza nome e senha do usuário.
+- **DELETE /users/:id**  
+  Remove usuário e seus mangás associados.
+
+### Mangás
+- **GET /mangas**  
+  Lista todos os mangás.
+- **POST /mangas**  
+  Cadastra um novo mangá.
+- **PUT /mangas/:id**  
+  Atualiza informações de um mangá.
+- **DELETE /mangas/:id**  
+  Remove um mangá.
+
+  ### Empréstimos
+- **GET /loans**  
+  Lista todos os empréstimos.
+- **POST /loans**  
+  Cria um novo empréstimo.
+- **PUT /loans/:id/return**  
+  Realiza a devolução de um mangá emprestado.
+
+### Enquetes
+- **GET /polls**  
+  Lista todas as enquetes.
+- **POST /polls**  
+  Cria uma nova enquete.
+- **POST /polls/:id/vote**  
+  Vota em uma opção da enquete.
+### Lista de Espera
+- **GET /waitlist**  
+  Lista de espera de mangás.
+- **POST /waitlist**  
+  Adiciona usuário à lista de espera.
+
+> Obs: Algumas rotas podem estar em desenvolvimento ou restritas a administradores.
 
 ## Estrutura do Banco de Dados
 
@@ -67,12 +105,13 @@ O banco de dados é definido em [`prisma/schema.prisma`](Backend/prisma/schema.p
 
 - O frontend ainda não está implementado.
 - Para acessar rotas privadas, é necessário enviar o token JWT no header `Authorization`.
+- O backend já possui rotas para cadastro, autenticação, listagem, atualização e exclusão de usuários, além de suporte para mangás, empréstimos, enquetes e lista de espera.
+
 
 ## Próximos passos
 
-Criar rotas de mangás/empréstimos/enquetes/notificações/lista de espera
-Iniciar desenvolvimento do frontend
-Implementar painel administrativo
+- Iniciar desenvolvimento do frontend
+- Implementar painel administrativo
 
 
 Feito com 🩷 por Alice.
