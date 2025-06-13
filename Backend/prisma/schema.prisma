@@ -46,7 +46,6 @@ model Manga {
   waitlist      Waitlist[]
   messages      Message[]
   totalReadings Int           @default(0)
-  options       MangaOption[]
 }
 
 model Loan {
@@ -85,8 +84,7 @@ model Poll {
 
 model MangaOption {
   id      String @id @default(auto()) @map("_id") @db.ObjectId
-  manga   Manga  @relation(fields: [mangaId], references: [id])
-  mangaId String @db.ObjectId
+  titleManga   String
   poll    Poll   @relation(fields: [pollId], references: [id])
   pollId  String @db.ObjectId
   votes   Vote[]
